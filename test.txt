@@ -1,0 +1,19 @@
+class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!"); 
+    }
+
+    int yo = AFG.GetNumber();
+
+    public void play(Player activPlayer) {
+        activPlayer.addActions(this.additionalActions);
+        activPlayer.addCoins(this.treasureValue);
+        activPlayer.addCoffers(this.coffers);
+        activPlayer.addVillagers(this.villagers);
+        activPlayer.addBuys(this.buys);
+        for (int i = 0; i < drawammount; i++) {
+            activPlayer.drawFromDeck();
+        }
+    }
+
+}
