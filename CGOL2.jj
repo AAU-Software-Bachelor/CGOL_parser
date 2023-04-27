@@ -59,8 +59,9 @@ public class JavaParser {
       parser.CompilationUnit();
       System.out.println("Java Parser Version 1.0.2:  Java program parsed successfully.");
     } catch (ParseException e) {
-      System.out.println("Java Parser Version 1.0.2:  Encountered errors during parse.");
-    }
+  System.out.println("Java Parse error at line " + e.currentToken.next.beginLine + ", column " + e.currentToken.next.beginColumn + ": " + e.getMessage());
+  System.out.println("Java Parser Version 1.0.2: Encountered errors during parse.");
+}
   }
 
 }
@@ -136,6 +137,8 @@ TOKEN : /* RESERVED WORDS AND LITERALS */
 | < VOID: "void" >
 | < VOLATILE: "volatile" >
 | < WHILE: "while" >
+| < GET: "get" >
+| < SET: "set" >
 }
 
 TOKEN : /* LITERALS */
@@ -415,13 +418,13 @@ void accessor_declarations() :
 void accessor_get_declaration() :
 {}
 {
-  (accessor_modifier())? "get" ";"
+  (accessor_modifier())? <GET> ";"
 }
 
 void accessor_set_declaration() :
 {}
 {
-  (accessor_modifier())? "set" ";"
+  (accessor_modifier())? <GET> ";"
 }
 
 void member_name() :
@@ -810,6 +813,8 @@ void Arguments() :
 {}
 {
   "(" [ ArgumentList() ] ")"
+  |
+  "()"
 }
 
 void ArgumentList() :
