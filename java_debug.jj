@@ -47,9 +47,6 @@
         System.out.println("Java Parser Version 1.0.2:  Reading from standard input . . .");
         parser = new JavaParser(System.in);
       } else if (args.length == 1) {
-        System.out.println("==========================================================================================================");
-        System.out.println("==========================================================================================================");
-        
         System.out.println("Java Parser Version 1.0.2:  Reading from file " + args[0] + " . . .");
         try {
           parser = new JavaParser(new java.io.FileInputStream(args[0]));
@@ -146,8 +143,7 @@
   | < VOID: "void" >
   | < VOLATILE: "volatile" >
   | < WHILE: "while" >
-  | < GET: "get" >
-  | < SET: "set" >
+
   }
   
   TOKEN : /* LITERALS */
@@ -390,59 +386,13 @@
   |
     FieldDeclaration()
   }
-
-void FieldDeclaration() :
-{printDebugInfo("FieldDeclaration");}
-{
-    (field_modifier())* Type() <IDENTIFIER> field_body()
-}
-
-void field_modifier() :
-{printDebugInfo("field_modifier");}
-{
-    "new"
-  | "public"
-  | "protected"
-  | "private"
-  | "static"
-  | "abstract"
-}
-
-void field_body() :
-{printDebugInfo("field_body");}
-{
-    (
-      LOOKAHEAD(3) "=" Expression() ("{" accessor_declarations() "}" | ";")
-    |
-      "{" accessor_declarations() "}"
-    |
-      ";"
-    )
-}
-
-void accessor_declarations() :
+  
+  void FieldDeclaration() :
+  {printDebugInfo("FieldDeclaration");}
   {
-    printDebugInfo("accessor_declarations");
+    ( "public" | "protected" | "private" | "static" | "final" | "transient" | "volatile" )*
+    Type() VariableDeclarator() ( "," VariableDeclarator() )* ";"
   }
-{
-  (
-    LOOKAHEAD(2) accessor_get_declaration() (LOOKAHEAD(2) accessor_set_declaration())?
-  |
-    LOOKAHEAD(2) accessor_set_declaration() (LOOKAHEAD(2) accessor_get_declaration())?
-  )
-}
-
-void accessor_get_declaration() :
-{printDebugInfo("accessor_get_declaration");}
-{
-  ( "private" | "public" )? <GET> ";"
-}
-
-void accessor_set_declaration() :
-{printDebugInfo("accessor_set_declaration");}
-{
-    ( "private" | "public" )? <SET> ";"
-}
   
   void VariableDeclarator() :
   {printDebugInfo("VariableDeclarator");}

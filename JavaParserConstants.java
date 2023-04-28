@@ -356,7 +356,6 @@ public interface JavaParserConstants {
     "\"<<=\"",
     "\">>=\"",
     "\">>>=\"",
-    "\"()\"",
   };
 
 }
