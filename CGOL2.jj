@@ -34,7 +34,11 @@ options {
 PARSER_BEGIN(JavaParser)
 
 public class JavaParser {
-
+  static void printDebugInfo(String productionName) {
+      Token t = getToken(1);
+      System.err.println("Parsing " + productionName + " at line " + t.beginLine + ", column " + t.beginColumn);
+      
+    }
   public static void main(String args[]) {
     JavaParser parser;
     if (args.length == 0) {
@@ -59,8 +63,9 @@ public class JavaParser {
       parser.CompilationUnit();
       System.out.println("Java Parser Version 1.0.2:  Java program parsed successfully.");
     } catch (ParseException e) {
-      System.out.println("Java Parser Version 1.0.2:  Encountered errors during parse.");
-    }
+  System.out.println("Java Parse error at line " + e.currentToken.next.beginLine + ", column " + e.currentToken.next.beginColumn + ": " + e.getMessage());
+  System.out.println("Java Parser Version 1.0.2: Encountered errors during parse.");
+}
   }
 
 }
@@ -136,6 +141,8 @@ TOKEN : /* RESERVED WORDS AND LITERALS */
 | < VOID: "void" >
 | < VOLATILE: "volatile" >
 | < WHILE: "while" >
+| < GET: "get" >
+| < SET: "set" >
 }
 
 TOKEN : /* LITERALS */
@@ -295,7 +302,7 @@ TOKEN : /* OPERATORS */
  */
 
 void CompilationUnit() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   [ PackageDeclaration() ]
   ( ImportDeclaration() )*
@@ -304,19 +311,19 @@ void CompilationUnit() :
 }
 
 void PackageDeclaration() :
-{}
+{printDebugInfo("PackageDeclaration");}
 {
   "package" Name() ";"
 }
 
 void ImportDeclaration() :
-{}
+{printDebugInfo("ImportDeclaration");}
 {
   "import" Name() [ "." "*" ] ";"
 }
 
 void TypeDeclaration() :
-{}
+{printDebugInfo("TypeDeclaration");}
 {
   LOOKAHEAD( ( "abstract" | "final" | "public" )* "class" )
   ClassDeclaration()
@@ -332,7 +339,9 @@ void TypeDeclaration() :
  */
 
 void ClassDeclaration() :
-{}
+  {
+    printDebugInfo("ClassDeclaration");
+  }
 {
   ( "abstract" | "final" | "public" )*
   "class" <IDENTIFIER> [ "extends" Name() ] [ "implements" NameList() ]
@@ -340,7 +349,7 @@ void ClassDeclaration() :
 }
 
 void ClassBodyDeclaration() :
-{}
+{printDebugInfo("ClassBodyDeclaration");}
 {
   LOOKAHEAD(2)
   StaticInitializer()
@@ -348,22 +357,28 @@ void ClassBodyDeclaration() :
   LOOKAHEAD( [ "public" | "protected" | "private" ] Name() "(" )
   ConstructorDeclaration()
 |
-  LOOKAHEAD( MethodDeclarationLookahead() )
-  MethodDeclaration()
+  LOOKAHEAD(3)  MethodDeclaration()
 |
   FieldDeclaration()
 }
 
 // This production is to determine lookahead only.
+// void MethodDeclarationLookahead() :
+// {}
+// {
+//   ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
+//   ResultType() <IDENTIFIER> "("
+// }
 void MethodDeclarationLookahead() :
 {}
 {
   ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
-  ResultType() <IDENTIFIER> "("
+  ResultType() <IDENTIFIER> Parameters()
 }
 
+
 void InterfaceDeclaration() :
-{}
+{printDebugInfo("InterfaceDeclaration");}
 {
   ( "abstract" | "public" )*
   "interface" <IDENTIFIER> [ "extends" NameList() ]
@@ -371,7 +386,7 @@ void InterfaceDeclaration() :
 }
 
 void InterfaceMemberDeclaration() :
-{}
+{printDebugInfo("InterfaceMemberDeclaration");}
 {
   LOOKAHEAD( MethodDeclarationLookahead() )
   MethodDeclaration()
@@ -380,13 +395,13 @@ void InterfaceMemberDeclaration() :
 }
 
 void FieldDeclaration() :
-{}
+{printDebugInfo("FieldDeclaration");}
 {
     (field_modifier())* Type() member_name() field_body()
 }
 
 void field_modifier() :
-{}
+{printDebugInfo("field_modifier");}
 {
     "new"
   | "public"
@@ -397,13 +412,15 @@ void field_modifier() :
 }
 
 void field_body() :
-{}
+{printDebugInfo("field_body");}
 {
     ("{" accessor_declarations() "}")? (field_initializer())? ";"
   | Expression() ";"
 }
 void accessor_declarations() :
-{}
+  {
+    printDebugInfo("accessor_declarations");
+  }
 {
   (
     LOOKAHEAD(2) accessor_get_declaration() (LOOKAHEAD(2) accessor_set_declaration())?
@@ -413,45 +430,50 @@ void accessor_declarations() :
 }
 
 void accessor_get_declaration() :
-{}
+{printDebugInfo("accessor_get_declaration");}
 {
-  (accessor_modifier())? "get" ";"
+  (accessor_modifier())? <GET> ";"
 }
 
 void accessor_set_declaration() :
-{}
+{printDebugInfo("accessor_set_declaration");}
 {
-  (accessor_modifier())? "set" ";"
+  (accessor_modifier())? <GET> ";"
 }
 
 void member_name() :
-{}
+{printDebugInfo("member_name");}
 {
     <IDENTIFIER>
 }
 
 void accessor_modifier() :
-{}
+{printDebugInfo("accessor_modifier");}
 {
     "public"
   | "protected"
   | "private"
 }
 void field_initializer() :
-{}
+  {
+    printDebugInfo("field_initializer");
+  }
 {
     "=" VariableInitializer()
 }
 void VariableInitializer() :
-{}
+  {
+    printDebugInfo("VariableInitializer");
+  }
 {
   "{" [ VariableInitializer() ( LOOKAHEAD(2) "," VariableInitializer() )* ] [ "," ] "}"
 |
   Expression()
 }
 
+
 void MethodDeclaration() :
-{}
+{printDebugInfo("MethodDeclaration");}
 {
   ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )*
   ResultType() MethodDeclarator() [ "throws" NameList() ]
@@ -459,37 +481,39 @@ void MethodDeclaration() :
 }
 
 void MethodDeclarator() :
-{}
+{printDebugInfo("MethodDeclarator");}
 {
   <IDENTIFIER> Parameters()
 }
+
 void Parameters() :
-{}
+{printDebugInfo("Parameters");}
 {
-  "(" [ ParameterList() ] ")"
-  | "()"
+  LOOKAHEAD(2) "(" [ ParameterList() ] ")" ( "[" "]" )*
+  |
+  LOOKAHEAD(2) "()"
 }
 
 void ParameterList() :
-{}
+{printDebugInfo("ParameterList");}
 {
   FormalParameter() ( LOOKAHEAD(2)"," FormalParameter() )* ( LOOKAHEAD(2)"," "?"OptionalParameter() )*
 }
 
 void FormalParameter() :
-{}
+{printDebugInfo("FormalParameter");}
 {
   Type() VariableDeclaratorId()
 }
 
 void OptionalParameter() :
-{}
+{printDebugInfo("OptionalParameter");}
 {
   Type() VariableDeclaratorId() "=" Expression()
 }
 
 void ConstructorDeclaration() :
-{}
+{printDebugInfo("ConstructorDeclaration");}
 {
   [ "public" | "protected" | "private" ]
   <IDENTIFIER> Parameters() [ "throws" NameList() ]
@@ -497,7 +521,7 @@ void ConstructorDeclaration() :
 }
 
 void ExplicitConstructorInvocation() :
-{}
+{printDebugInfo("ExplicitConstructorInvocation");}
 {
   "this" Arguments() ";"
 |
@@ -505,20 +529,20 @@ void ExplicitConstructorInvocation() :
 }
 
 void StaticInitializer() :
-{}
+{printDebugInfo("StaticInitializer");}
 {
   "static" Block()
 }
 
 
 void VariableDeclarator() :
-{}
+{printDebugInfo("VariableDeclarator");}
 {
   VariableDeclaratorId() [ "=" VariableInitializer() ]
 }
 
 void VariableDeclaratorId() :
-{}
+{printDebugInfo("VariableDeclaratorId");}
 {
   <IDENTIFIER> ( "[" "]" )*
 }
@@ -587,7 +611,7 @@ void NameList() :
  */
 
 void Expression() :
-{}
+{printDebugInfo("Expression");}
 {
   LOOKAHEAD( PrimaryExpression() AssignmentOperator() )
   Assignment()
@@ -730,13 +754,13 @@ void CastLookahead() :
 }
 
 void PostfixExpression() :
-{}
+{printDebugInfo("PostfixExpression");}
 {
   PrimaryExpression() [ "++" | "--" ]
 }
 
 void CastExpression() :
-{}
+{printDebugInfo("CastExpression");}
 {
   LOOKAHEAD(2)
   "(" PrimitiveType() ( "[" "]" )* ")" UnaryExpression()
@@ -745,13 +769,13 @@ void CastExpression() :
 }
 
 void PrimaryExpression() :
-{}
+{printDebugInfo("PrimaryExpression");}
 {
   PrimaryPrefix() ( PrimarySuffix() )*
 }
 
 void PrimaryPrefix() :
-{}
+{printDebugInfo("PrimaryPrefix");}
 {
   Literal()
 |
@@ -767,7 +791,7 @@ void PrimaryPrefix() :
 }
 
 void PrimarySuffix() :
-{}
+{printDebugInfo("PrimarySuffix");}
 {
   "[" Expression() "]"
 |
@@ -777,7 +801,7 @@ void PrimarySuffix() :
 }
 
 void Literal() :
-{}
+{printDebugInfo("Literal");}
 {
   <INTEGER_LITERAL>
 |
@@ -793,7 +817,7 @@ void Literal() :
 }
 
 void BooleanLiteral() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "true"
 |
@@ -801,25 +825,27 @@ void BooleanLiteral() :
 }
 
 void NullLiteral() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "null"
 }
 
 void Arguments() :
-{}
+{printDebugInfo("Arguments");}
 {
   "(" [ ArgumentList() ] ")"
+  |
+  "()"
 }
 
 void ArgumentList() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   Expression() ( "," Expression() )*
 }
 
 void AllocationExpression() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   LOOKAHEAD(2)
   "new" PrimitiveType() ArrayDimensions()
@@ -843,7 +869,7 @@ void ArrayDimensions() :
  */
 
 void Statement() :
-{}
+{printDebugInfo("Statement");}
 {
   LOOKAHEAD(2)
   LabeledStatement()
@@ -878,19 +904,19 @@ void Statement() :
 }
 
 void LabeledStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   <IDENTIFIER> ":" Statement()
 }
 
 void Block() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "{" ( BlockStatement() )* "}"
 }
 
 void BlockStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   LOOKAHEAD(Type() <IDENTIFIER>)
   LocalVariableDeclaration() ";"
@@ -899,13 +925,13 @@ void BlockStatement() :
 }
 
 void LocalVariableDeclaration() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   Type() VariableDeclarator() ( "," VariableDeclarator() )*
 }
 
 void EmptyStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   ";"
 }
@@ -915,7 +941,7 @@ void StatementExpression() :
  * The last expansion of this production accepts more than the legal
  * Java expansions for StatementExpression.
  */
-{}
+{printDebugInfo("CompilationUnit");}
 {
   PreIncrementExpression()
 |
@@ -928,7 +954,7 @@ void StatementExpression() :
 }
 
 void SwitchStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "switch" "(" Expression() ")" "{"
     ( SwitchLabel() ( BlockStatement() )* )*
@@ -936,7 +962,7 @@ void SwitchStatement() :
 }
 
 void SwitchLabel() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "case" Expression() ":"
 |
@@ -949,31 +975,31 @@ void IfStatement() :
  * else's to the innermost if statement.  The LOOKAHEAD specification
  * is to tell JavaCC that we know what we are doing.
  */
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "if" "(" Expression() ")" Statement() [ LOOKAHEAD(1) "else" Statement() ]
 }
 
 void WhileStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "while" "(" Expression() ")" Statement()
 }
 
 void DoStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "do" Statement() "while" "(" Expression() ")" ";"
 }
 
 void ForStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "for" "(" [ ForInit() ] ";" [ Expression() ] ";" [ ForUpdate() ] ")" Statement()
 }
 
 void ForInit() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   LOOKAHEAD( Type() <IDENTIFIER> )
   LocalVariableDeclaration()
@@ -982,43 +1008,43 @@ void ForInit() :
 }
 
 void StatementExpressionList() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   StatementExpression() ( "," StatementExpression() )*
 }
 
 void ForUpdate() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   StatementExpressionList()
 }
 
 void BreakStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "break" [ <IDENTIFIER> ] ";"
 }
 
 void ContinueStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "continue" [ <IDENTIFIER> ] ";"
 }
 
 void ReturnStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "return" [ Expression() ] ";"
 }
 
 void ThrowStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "throw" Expression() ";"
 }
 
 void SynchronizedStatement() :
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "synchronized" "(" Expression() ")" Block()
 }
@@ -1028,7 +1054,7 @@ void TryStatement() :
  * Semantic check required here to make sure that at least one
  * finally/catch is present.
  */
-{}
+{printDebugInfo("CompilationUnit");}
 {
   "try" Block()
   ( "catch" "(" FormalParameter() ")" Block() )*

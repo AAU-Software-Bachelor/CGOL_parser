@@ -39,85 +39,85 @@ public interface JavaParserConstants {
   /** RegularExpression Id. */
   int DO = 20;
   /** RegularExpression Id. */
-  int GET = 21;
+  int DOUBLE = 21;
   /** RegularExpression Id. */
-  int SET = 22;
+  int ELSE = 22;
   /** RegularExpression Id. */
-  int DOUBLE = 23;
+  int EXTENDS = 23;
   /** RegularExpression Id. */
-  int ELSE = 24;
+  int FALSE = 24;
   /** RegularExpression Id. */
-  int EXTENDS = 25;
+  int FINAL = 25;
   /** RegularExpression Id. */
-  int FALSE = 26;
+  int FINALLY = 26;
   /** RegularExpression Id. */
-  int FINAL = 27;
+  int FLOAT = 27;
   /** RegularExpression Id. */
-  int FINALLY = 28;
+  int FOR = 28;
   /** RegularExpression Id. */
-  int FLOAT = 29;
+  int GOTO = 29;
   /** RegularExpression Id. */
-  int FOR = 30;
+  int IF = 30;
   /** RegularExpression Id. */
-  int GOTO = 31;
+  int IMPLEMENTS = 31;
   /** RegularExpression Id. */
-  int IF = 32;
+  int IMPORT = 32;
   /** RegularExpression Id. */
-  int IMPLEMENTS = 33;
+  int INSTANCEOF = 33;
   /** RegularExpression Id. */
-  int IMPORT = 34;
+  int INT = 34;
   /** RegularExpression Id. */
-  int INSTANCEOF = 35;
+  int INTERFACE = 35;
   /** RegularExpression Id. */
-  int INT = 36;
+  int LONG = 36;
   /** RegularExpression Id. */
-  int INTERFACE = 37;
+  int NATIVE = 37;
   /** RegularExpression Id. */
-  int LONG = 38;
+  int NEW = 38;
   /** RegularExpression Id. */
-  int NATIVE = 39;
+  int NULL = 39;
   /** RegularExpression Id. */
-  int NEW = 40;
+  int PACKAGE = 40;
   /** RegularExpression Id. */
-  int NULL = 41;
+  int PRIVATE = 41;
   /** RegularExpression Id. */
-  int PACKAGE = 42;
+  int PROTECTED = 42;
   /** RegularExpression Id. */
-  int PRIVATE = 43;
+  int PUBLIC = 43;
   /** RegularExpression Id. */
-  int PROTECTED = 44;
+  int RETURN = 44;
   /** RegularExpression Id. */
-  int PUBLIC = 45;
+  int SHORT = 45;
   /** RegularExpression Id. */
-  int RETURN = 46;
+  int STATIC = 46;
   /** RegularExpression Id. */
-  int SHORT = 47;
+  int SUPER = 47;
   /** RegularExpression Id. */
-  int STATIC = 48;
+  int SWITCH = 48;
   /** RegularExpression Id. */
-  int SUPER = 49;
+  int SYNCHRONIZED = 49;
   /** RegularExpression Id. */
-  int SWITCH = 50;
+  int THIS = 50;
   /** RegularExpression Id. */
-  int SYNCHRONIZED = 51;
+  int THROW = 51;
   /** RegularExpression Id. */
-  int THIS = 52;
+  int THROWS = 52;
   /** RegularExpression Id. */
-  int THROW = 53;
+  int TRANSIENT = 53;
   /** RegularExpression Id. */
-  int THROWS = 54;
+  int TRUE = 54;
   /** RegularExpression Id. */
-  int TRANSIENT = 55;
+  int TRY = 55;
   /** RegularExpression Id. */
-  int TRUE = 56;
+  int VOID = 56;
   /** RegularExpression Id. */
-  int TRY = 57;
+  int VOLATILE = 57;
   /** RegularExpression Id. */
-  int VOID = 58;
+  int WHILE = 58;
   /** RegularExpression Id. */
-  int VOLATILE = 59;
+  int GET = 59;
   /** RegularExpression Id. */
-  int WHILE = 60;
+  int SET = 60;
   /** RegularExpression Id. */
   int INTEGER_LITERAL = 61;
   /** RegularExpression Id. */
@@ -259,8 +259,6 @@ public interface JavaParserConstants {
     "\"continue\"",
     "\"default\"",
     "\"do\"",
-    "\"get\"",
-    "\"set\"",
     "\"double\"",
     "\"else\"",
     "\"extends\"",
@@ -299,6 +297,8 @@ public interface JavaParserConstants {
     "\"void\"",
     "\"volatile\"",
     "\"while\"",
+    "\"get\"",
+    "\"set\"",
     "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",
     "<HEX_LITERAL>",
@@ -356,7 +356,6 @@ public interface JavaParserConstants {
     "\"<<=\"",
     "\">>=\"",
     "\">>>=\"",
-    "\"()\"",
   };
 
 }
